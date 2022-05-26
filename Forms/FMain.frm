@@ -27,12 +27,12 @@ Begin VB.Form FMain
    End
    Begin VB.Label Label4 
       AutoSize        =   -1  'True
-      Caption         =   "Letzte Speicherung"
+      Caption         =   "Letzte Speicherung (=Änderungsdatum)"
       Height          =   195
       Left            =   3360
       TabIndex        =   12
       Top             =   1680
-      Width           =   1380
+      Width           =   2805
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True

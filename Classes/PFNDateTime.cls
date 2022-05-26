@@ -29,32 +29,11 @@ Private Const FILE_FLAG_BACKUP_SEMANTICS As Long = &H2000000
 Private m_PFN As PathFileName
 Private m_Handle As LongPtr
 
-'Private Type FILETIME
-'    dwLowDateTime  As Long ' 4
-'    dwHighDateTime As Long ' 4
-'End Type               'Sum: 8
-'
-'Private Type SYSTEMTIME
-'    wYear          As Integer ' 2
-'    wMonth         As Integer ' 2
-'    wDayOfWeek     As Integer ' 2
-'    wDay           As Integer ' 2
-'    wHour          As Integer ' 2
-'    wMinute        As Integer ' 2
-'    wSecond        As Integer ' 2
-'    wMilliseconds  As Integer ' 2
-'End Type                 'Sum: 16
-
 Private Declare Function CreateFileW Lib "kernel32" (ByVal lpFilename As LongPtr, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, lpSecurityAttributes As Any, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As Long) As LongPtr
 Private Declare Function GetFileTime Lib "kernel32" (ByVal hFile As LongPtr, lpCreationTime As FILETIME, lpLastAccessTime As FILETIME, lpLastWriteTime As FILETIME) As Long
 Private Declare Function SetFileTime Lib "kernel32" (ByVal hFile As LongPtr, lpCreationTime As FILETIME, lpLastAccessTime As FILETIME, lpLastWriteTime As FILETIME) As Long
 Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As LongPtr) As Long
  
-'Private Declare Function FileTimeToLocalFileTime Lib "kernel32" (lpFileTime As FILETIME, lpLocalFileTime As FILETIME) As Long
-'Private Declare Function LocalFileTimeToFileTime Lib "kernel32" (lpLocalFileTime As FILETIME, lpFileTime As FILETIME) As Long
-'Private Declare Function FileTimeToSystemTime Lib "kernel32" (lpFileTime As FILETIME, lpSystemTime As SYSTEMTIME) As Long
-'Private Declare Function SystemTimeToFileTime Lib "kernel32" (lpSystemTime As SYSTEMTIME, lpFileTime As FILETIME) As Long
-
 Friend Sub New_(aPFN As PathFileName)
     Set m_PFN = aPFN
     m_Handle = CreateFileW(StrPtr(m_PFN.Value), GENERIC_READ Or GENERIC_WRITE, FILE_SHARE_READ Or FILE_SHARE_WRITE, ByVal 0&, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0&)
@@ -85,8 +64,9 @@ Public Property Get CreationTime() As Date
         MsgBox "Could not get FileTime from file: " & m_PFN.Value
         Exit Property
     End If
-    ct = MTime.FileTime_ToLocalFileTime(ct)
-    CreationTime = MTime.FileTime_ToDate(ct)
+    CreationTime = MTime.SystemTime_ToDate(MTime.SystemTime_ToTzSpecificLocalTime(MTime.FileTime_ToSystemTime(ct)))
+    'ct = MTime.FileTime_ToLocalFileTime(ct)
+    'CreationTime = MTime.FileTime_ToDate(ct)
 End Property
 Public Property Let CreationTime(ByVal aDateTime As Date)
     If m_Handle <= 0 Then Exit Property
@@ -110,8 +90,9 @@ Public Property Get LastAccessTime() As Date
         MsgBox "Could not get FileTime from file: " & m_PFN.Value
         Exit Property
     End If
-    lat = MTime.FileTime_ToLocalFileTime(lat)
-    LastAccessTime = MTime.FileTime_ToDate(lat)
+    LastAccessTime = MTime.SystemTime_ToDate(MTime.SystemTime_ToTzSpecificLocalTime(MTime.FileTime_ToSystemTime(lat)))
+    'lat = MTime.FileTime_ToLocalFileTime(lat)
+    'LastAccessTime = MTime.FileTime_ToDate(lat)
 End Property
 Public Property Let LastAccessTime(ByVal aDateTime As Date)
     If m_Handle <= 0 Then Exit Property
@@ -135,8 +116,9 @@ Public Property Get LastWriteTime() As Date
         MsgBox "Could not get FileTime from file: " & vbCrLf & m_PFN.Value
         Exit Property
     End If
-    lwt = MTime.FileTime_ToLocalFileTime(lwt)
-    LastWriteTime = MTime.FileTime_ToDate(lwt)
+    LastWriteTime = MTime.SystemTime_ToDate(MTime.SystemTime_ToTzSpecificLocalTime(MTime.FileTime_ToSystemTime(lwt)))
+    'lwt = MTime.FileTime_ToLocalFileTime(lwt)
+    'LastWriteTime = MTime.FileTime_ToDate(lwt)
 End Property
 Public Property Let LastWriteTime(ByVal aDateTime As Date)
     If m_Handle <= 0 Then Exit Property
