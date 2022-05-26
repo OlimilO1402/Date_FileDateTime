@@ -52,6 +52,13 @@ End Sub
 'Public Property Get Handle() As LongPtr
 '    Handle = m_Handle
 'End Property
+Public Property Get IsEqual(other As PFNDateTime) As Boolean
+    'here only compare the datetimes not the filename
+    If Not (Me.CreationTime = other.CreationTime) Then Exit Property
+    If Not (Me.LastAccessTime = other.LastAccessTime) Then Exit Property
+    If Not (Me.LastWriteTime = other.LastWriteTime) Then Exit Property
+    IsEqual = True
+End Property
 
 Public Property Get PathFileName() As PathFileName
     Set PathFileName = m_PFN
