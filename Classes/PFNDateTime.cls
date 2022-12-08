@@ -13,11 +13,11 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-#If VBA7 = 0 Then
-    Private Enum LongPtr
-        [_]
-    End Enum
-#End If
+'#If VBA7 = 0 Then
+'    Private Enum LongPtr
+'        [_]
+'    End Enum
+'#End If
 
 Private Const GENERIC_READ               As Long = &H80000000
 Private Const GENERIC_WRITE              As Long = &H40000000
@@ -26,14 +26,14 @@ Private Const FILE_SHARE_WRITE           As Long = &H2
 Private Const OPEN_EXISTING              As Long = 3
 Private Const FILE_FLAG_BACKUP_SEMANTICS As Long = &H2000000
 
-Private m_PFN As PathFileName
-Private m_Handle As LongPtr
-
 Private Declare Function CreateFileW Lib "kernel32" (ByVal lpFilename As LongPtr, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, lpSecurityAttributes As Any, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As Long) As LongPtr
 Private Declare Function GetFileTime Lib "kernel32" (ByVal hFile As LongPtr, lpCreationTime As FILETIME, lpLastAccessTime As FILETIME, lpLastWriteTime As FILETIME) As Long
 Private Declare Function SetFileTime Lib "kernel32" (ByVal hFile As LongPtr, lpCreationTime As FILETIME, lpLastAccessTime As FILETIME, lpLastWriteTime As FILETIME) As Long
 Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As LongPtr) As Long
- 
+
+Private m_PFN    As PathFileName
+Private m_Handle As LongPtr
+
 Friend Sub New_(aPFN As PathFileName)
     Set m_PFN = aPFN
     m_Handle = CreateFileW(StrPtr(m_PFN.Value), GENERIC_READ Or GENERIC_WRITE, FILE_SHARE_READ Or FILE_SHARE_WRITE, ByVal 0&, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0&)
@@ -52,6 +52,7 @@ End Sub
 'Public Property Get Handle() As LongPtr
 '    Handle = m_Handle
 'End Property
+
 Public Property Get IsEqual(other As PFNDateTime) As Boolean
     'here only compare the datetimes not the filename
     If Not (Me.CreationTime = other.CreationTime) Then Exit Property
