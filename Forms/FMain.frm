@@ -166,16 +166,16 @@ End Sub
 Private Sub BtnOpenFile_Click()
     Dim OFD As OpenFileDialog: Set OFD = New OpenFileDialog
     If OFD.ShowDialog(Me) = vbCancel Then Exit Sub
-    Dim pfn As PathFileName: Set pfn = MNew.PathFileName(OFD.FileName)
-    Set m_PDT = MNew.PFNDateTime(pfn)
+    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(OFD.FileName)
+    Set m_PDT = MNew.PFNDateTime(PFN)
     UpdateView
 End Sub
 
 Private Sub BtnOpenFolder_Click()
     Dim OFD As OpenFolderDialog: Set OFD = New OpenFolderDialog
     If OFD.ShowDialog(Me.hwnd) = vbCancel Then Exit Sub
-    Dim pfn As PathFileName: Set pfn = MNew.PathFileName(OFD.Folder)
-    Set m_PDT = MNew.PFNDateTime(pfn)
+    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(OFD.Folder)
+    Set m_PDT = MNew.PFNDateTime(PFN)
     UpdateView
 End Sub
 
@@ -203,7 +203,7 @@ Private Sub LblLAccessTime_DblClick()
     UpdateView
 End Sub
 
-Private Sub LblLWriteTime_Click()
+Private Sub LblLWriteTime_DblClick()
     Dim s As String: s = Trim(LblLWriteTime.Caption)
     If Len(s) = 0 Then
         MsgBox "Nothing to edit, open a file or folder first!"
