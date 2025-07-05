@@ -176,10 +176,37 @@ End Sub
 Private Sub Form_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
     If Not Data.GetFormat(ClipBoardConstants.vbCFFiles) Then Exit Sub
     If Data.Files.Count = 0 Then Exit Sub
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(Data.Files.Item(1))
+    FileOpenUpdateViewClose Data.Files.Item(1)
+End Sub
+
+Private Sub BtnOpenFile_Click()
+    Dim OFD As OpenFileDialog: Set OFD = New OpenFileDialog
+    If OFD.ShowDialog(Me) = vbCancel Then Exit Sub
+    FileOpenUpdateViewClose OFD.FileName
+End Sub
+
+Private Sub BtnOpenFolder_Click()
+    Dim OFD As OpenFolderDialog: Set OFD = New OpenFolderDialog
+    If OFD.ShowDialog(Me.hwnd) = vbCancel Then Exit Sub
+    FileOpenUpdateViewClose OFD.Folder
+End Sub
+
+Private Sub FileOpenUpdateViewClose(spfn As String)
+    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(spfn)
     Set m_PDT = MNew.PFNDateTime(PFN)
-    m_PDT.CClose
     UpdateView
+    m_PDT.CClose
+End Sub
+
+Private Sub BtnWriteBackAllFileDates_Click()
+    Dim s As String: s = LblPathFileName.Caption
+    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(s)
+    Set m_PDT = MNew.PFNDateTime(PFN)
+    s = Trim(LblCreationTime.Caption):   If Len(s) <> 0 Then m_PDT.CreationTime = CDate(s)
+    s = Trim(LblLAccessTime.Caption):    If Len(s) <> 0 Then m_PDT.LastAccessTime = CDate(s)
+    s = Trim(LblLWriteTime.Caption):     If Len(s) <> 0 Then m_PDT.LastWriteTime = CDate(s)
+    UpdateView
+    m_PDT.CClose
 End Sub
 
 Private Sub UpdateView()
@@ -189,31 +216,6 @@ Private Sub UpdateView()
         LblLAccessTime.Caption = .LastAccessTime
         LblLWriteTime.Caption = .LastWriteTime
     End With
-End Sub
-
-Private Sub BtnOpenFile_Click()
-    Dim OFD As OpenFileDialog: Set OFD = New OpenFileDialog
-    If OFD.ShowDialog(Me) = vbCancel Then Exit Sub
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(OFD.FileName)
-    Set m_PDT = MNew.PFNDateTime(PFN)
-    m_PDT.CClose
-    UpdateView
-End Sub
-
-Private Sub BtnOpenFolder_Click()
-    Dim OFD As OpenFolderDialog: Set OFD = New OpenFolderDialog
-    If OFD.ShowDialog(Me.hwnd) = vbCancel Then Exit Sub
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(OFD.Folder)
-    Set m_PDT = MNew.PFNDateTime(PFN)
-    UpdateView
-End Sub
-
-Private Sub BtnWriteBackAllFileDates_Click()
-    Dim s As String
-    s = Trim(LblCreationTime.Caption):   If Len(s) <> 0 Then m_PDT.CreationTime = CDate(s)
-    s = Trim(LblLAccessTime.Caption):    If Len(s) <> 0 Then m_PDT.LastAccessTime = CDate(s)
-    s = Trim(LblLWriteTime.Caption):     If Len(s) <> 0 Then m_PDT.LastWriteTime = CDate(s)
-    UpdateView
 End Sub
 
 Private Sub LblCreationTime_DblClick()
