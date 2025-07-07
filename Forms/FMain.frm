@@ -20,11 +20,19 @@ Begin VB.Form FMain
    ScaleHeight     =   2175
    ScaleWidth      =   10500
    StartUpPosition =   3  'Windows-Standard
-   Begin VB.CommandButton BtnWriteBackAllFileDates 
-      Caption         =   "Write All Dates"
+   Begin VB.CommandButton BtnWriteAllFileDates 
+      Caption         =   "Write Dates"
+      Height          =   375
+      Left            =   4800
+      TabIndex        =   13
+      Top             =   120
+      Width           =   1575
+   End
+   Begin VB.CommandButton BtnReadFileDates 
+      Caption         =   "Read Dates"
       Height          =   375
       Left            =   3240
-      TabIndex        =   13
+      TabIndex        =   14
       Top             =   120
       Width           =   1575
    End
@@ -157,7 +165,7 @@ Begin VB.Form FMain
       Left            =   2040
       TabIndex        =   1
       Top             =   600
-      Width           =   4230
+      Width           =   4335
    End
 End
 Attribute VB_Name = "FMain"
@@ -176,80 +184,72 @@ End Sub
 Private Sub Form_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
     If Not Data.GetFormat(ClipBoardConstants.vbCFFiles) Then Exit Sub
     If Data.Files.Count = 0 Then Exit Sub
-    FileOpenUpdateViewClose Data.Files.Item(1)
+    LblPathFileName.Caption = Data.Files.Item(1)
 End Sub
 
 Private Sub BtnOpenFile_Click()
     Dim OFD As OpenFileDialog: Set OFD = New OpenFileDialog
     If OFD.ShowDialog(Me) = vbCancel Then Exit Sub
-    FileOpenUpdateViewClose OFD.FileName
+    LblPathFileName.Caption = OFD.FileName
 End Sub
 
 Private Sub BtnOpenFolder_Click()
     Dim OFD As OpenFolderDialog: Set OFD = New OpenFolderDialog
     If OFD.ShowDialog(Me.hwnd) = vbCancel Then Exit Sub
-    FileOpenUpdateViewClose OFD.Folder
+    LblPathFileName.Caption = OFD.Folder
 End Sub
 
-Private Sub FileOpenUpdateViewClose(spfn As String)
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(spfn)
+Private Sub BtnReadFileDates_Click()
+    Dim s As String: s = Trim(LblPathFileName.Caption)
+    If Len(s) = 0 Then
+        MsgBox "No filename, open a file or folder first!"
+        Exit Sub
+    End If
+    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(s)
     Set m_PDT = MNew.PFNDateTime(PFN)
-    UpdateView
+    With m_PDT
+        LblCreationTime.Caption = .CreationTime
+        LblLAccessTime.Caption = .LastAccessTime
+        LblLWriteTime.Caption = .LastWriteTime
+    End With
     m_PDT.CClose
 End Sub
 
-Private Sub BtnWriteBackAllFileDates_Click()
+Private Sub BtnWriteAllFileDates_Click()
     Dim s As String: s = LblPathFileName.Caption
     Dim PFN As PathFileName: Set PFN = MNew.PathFileName(s)
     Set m_PDT = MNew.PFNDateTime(PFN)
     s = Trim(LblCreationTime.Caption):   If Len(s) <> 0 Then m_PDT.CreationTime = CDate(s)
     s = Trim(LblLAccessTime.Caption):    If Len(s) <> 0 Then m_PDT.LastAccessTime = CDate(s)
     s = Trim(LblLWriteTime.Caption):     If Len(s) <> 0 Then m_PDT.LastWriteTime = CDate(s)
-    UpdateView
     m_PDT.CClose
 End Sub
 
-Private Sub UpdateView()
-    With m_PDT
-        LblPathFileName.Caption = .PathFileName.Value
-        LblCreationTime.Caption = .CreationTime
-        LblLAccessTime.Caption = .LastAccessTime
-        LblLWriteTime.Caption = .LastWriteTime
-    End With
-End Sub
-
-Private Sub LblCreationTime_DblClick()
-    Dim s As String: s = Trim(LblCreationTime.Caption)
+Private Function EditDateTime(ByVal s As String, dttyp As String) As String
+    s = Trim(s)
     If Len(s) = 0 Then
         MsgBox "Nothing to edit, open a file or folder first!"
-        Exit Sub
+        Exit Function
     End If
-    s = InputBox("Edit Creation-Time:", "Edit DateTime-Value", s)
-    If StrPtr(s) = 0 Then Exit Sub
-    m_PDT.CreationTime = CDate(s)
-    UpdateView
+    s = InputBox("Edit " & dttyp & " :", "Edit DateTime-Value", s)
+    If StrPtr(s) = 0 Then Exit Function
+    EditDateTime = s
+End Function
+
+Private Sub LblCreationTime_DblClick()
+    Dim s As String: s = EditDateTime(LblCreationTime.Caption, "Creation-Time")
+    If Len(s) = 0 Then Exit Sub
+    LblCreationTime.Caption = s
 End Sub
 
 Private Sub LblLAccessTime_DblClick()
-    Dim s As String: s = Trim(LblLAccessTime.Caption)
-    If Len(s) = 0 Then
-        MsgBox "Nothing to edit, open a file or folder first!"
-        Exit Sub
-    End If
-    s = InputBox("Edit Last Access-Time:", "Edit DateTime-Value", s)
-    If StrPtr(s) = 0 Then Exit Sub
-    m_PDT.LastAccessTime = CDate(s)
-    UpdateView
+    Dim s As String: s = EditDateTime(LblLAccessTime.Caption, "Last Access-Time")
+    If Len(s) = 0 Then Exit Sub
+    LblLAccessTime.Caption = s
 End Sub
 
 Private Sub LblLWriteTime_DblClick()
-    Dim s As String: s = Trim(LblLWriteTime.Caption)
-    If Len(s) = 0 Then
-        MsgBox "Nothing to edit, open a file or folder first!"
-        Exit Sub
-    End If
-    s = InputBox("Edit Last Write-Time:", "Edit DateTime-Value", s)
-    If StrPtr(s) = 0 Then Exit Sub
-    m_PDT.LastWriteTime = CDate(s)
-    UpdateView
+    Dim s As String: s = EditDateTime(LblCreationTime.Caption, "Last Write-Time")
+    If Len(s) = 0 Then Exit Sub
+    LblLWriteTime.Caption = s
 End Sub

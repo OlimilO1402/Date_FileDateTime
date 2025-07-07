@@ -3,7 +3,7 @@
 
 [![GitHub](https://img.shields.io/github/license/OlimilO1402/Date_FileDateTime?style=plastic)](https://github.com/OlimilO1402/Date_FileDateTime/blob/master/LICENSE) 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/OlimilO1402/Date_FileDateTime?style=plastic)](https://github.com/OlimilO1402/Date_FileDateTime/releases/latest)
-[![Github All Releases](https://img.shields.io/github/downloads/OlimilO1402/Date_FileDateTime/total.svg)](https://github.com/OlimilO1402/Date_FileDateTime/releases/download/v2025.7.5/FileDateTime_v2025.7.5.zip)
+[![Github All Releases](https://img.shields.io/github/downloads/OlimilO1402/Date_FileDateTime/total.svg)](https://github.com/OlimilO1402/Date_FileDateTime/releases/download/v2025.7.7/FileDateTime_v2025.7.7.zip)
 ![GitHub followers](https://img.shields.io/github/followers/OlimilO1402?style=social)
 
 Project started in may 2022.  
