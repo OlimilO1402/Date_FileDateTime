@@ -20,6 +20,14 @@ Begin VB.Form FMain
    ScaleHeight     =   2175
    ScaleWidth      =   10500
    StartUpPosition =   3  'Windows-Standard
+   Begin VB.CommandButton BtnFiles 
+      Caption         =   "Files >>"
+      Height          =   375
+      Left            =   6360
+      TabIndex        =   15
+      Top             =   120
+      Width           =   1575
+   End
    Begin VB.CommandButton BtnWriteAllFileDates 
       Caption         =   "Write Dates"
       Height          =   375
@@ -176,12 +184,16 @@ Attribute VB_Exposed = False
 Option Explicit
 Private m_PDT As PFNDateTime
 
+Private Sub BtnFiles_Click()
+    FFiles.Show
+End Sub
+
 Private Sub Form_Load()
     MTime.Init
     Me.Caption = Me.Caption & " v" & App.Major & "." & App.Minor & "." & App.Revision
 End Sub
 
-Private Sub Form_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_OLEDragDrop(Data As DataObject, Effect As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Not Data.GetFormat(ClipBoardConstants.vbCFFiles) Then Exit Sub
     If Data.Files.Count = 0 Then Exit Sub
     LblPathFileName.Caption = Data.Files.Item(1)
@@ -205,8 +217,8 @@ Private Sub BtnReadFileDates_Click()
         MsgBox "No filename, open a file or folder first!"
         Exit Sub
     End If
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(s)
-    Set m_PDT = MNew.PFNDateTime(PFN)
+    Dim pfn As PathFileName: Set pfn = MNew.PathFileName(s)
+    Set m_PDT = MNew.PFNDateTime(pfn)
     With m_PDT
         LblCreationTime.Caption = .CreationTime
         LblLAccessTime.Caption = .LastAccessTime
@@ -217,8 +229,8 @@ End Sub
 
 Private Sub BtnWriteAllFileDates_Click()
     Dim s As String: s = LblPathFileName.Caption
-    Dim PFN As PathFileName: Set PFN = MNew.PathFileName(s)
-    Set m_PDT = MNew.PFNDateTime(PFN)
+    Dim pfn As PathFileName: Set pfn = MNew.PathFileName(s)
+    Set m_PDT = MNew.PFNDateTime(pfn)
     s = Trim(LblCreationTime.Caption):   If Len(s) <> 0 Then m_PDT.CreationTime = CDate(s)
     s = Trim(LblLAccessTime.Caption):    If Len(s) <> 0 Then m_PDT.LastAccessTime = CDate(s)
     s = Trim(LblLWriteTime.Caption):     If Len(s) <> 0 Then m_PDT.LastWriteTime = CDate(s)
